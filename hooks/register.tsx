@@ -6,7 +6,7 @@ import type { Pr } from '../types'
 const prs = atom({ plugin: 'pr-peek', key: 'prs' } as const, {})
 const PR_URL = /https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/pull\/\d+/g
 const STYLE = {
-  OPEN: '🔄',
+  OPEN: '🟢',
   DRAFT: '📝',
   MERGED: '✅',
   CLOSED: '❌',

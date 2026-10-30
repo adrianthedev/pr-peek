@@ -3,7 +3,7 @@
 A Claude Code mod that shows the status of GitHub pull requests linked in the chat, right after each link:
 
 - ✅ merged
-- 🔄 open
+- 🟢 open
 - 📝 draft
 - ❌ closed
 - ❔ couldn't check
