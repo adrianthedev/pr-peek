@@ -1,0 +1,5 @@
+{
+  "name": "pr-peek",
+  "owner": { "name": "Adrian Marin" },
+  "plugins": [{ "name": "pr-peek", "source": "./" }]
+}

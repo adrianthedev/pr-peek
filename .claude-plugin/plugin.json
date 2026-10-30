@@ -1,0 +1,1 @@
+{ "name": "pr-peek", "version": "0.1.0", "description": "Shows the status of GitHub PRs linked in chat, right after each link", "author": { "name": "Adrian Marin" }, "license": "MIT", "types": "./types/index.d.ts" }
