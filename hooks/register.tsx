@@ -9,7 +9,7 @@ const STYLE = {
   OPEN: '🟢',
   DRAFT: '📝',
   MERGED: '✅',
-  CLOSED: '❌',
+  CLOSED: '🟣',
   ERROR: '❔',
 } as const
 
