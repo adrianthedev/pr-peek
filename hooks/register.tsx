@@ -74,16 +74,12 @@ const PR_LINK = new RegExp(`\\[([^\\]\\n]*)\\]\\((${PR_URL.source})\\)|<(${PR_UR
 // The URL of a PR_LINK match, whichever of its three forms matched.
 const urlOf = (m: RegExpMatchArray) => (m[2] ?? m[3] ?? m[4])!
 
-// Reads every PR link in the text and starts a check for each stale one.
-async function known($: EngineInterface, text: string) {
-  const all = await read($, prs)
-  const now = await $.clock.now()
-  for (const m of text.matchAll(PR_LINK)) {
-    const url = urlOf(m)
+// The PR links in the text whose status is missing or older than RECHECK_MS.
+function stale(all: Record<string, Pr>, text: string, now: number) {
+  return [...text.matchAll(PR_LINK)].map(urlOf).filter(url => {
     const pr = all[url]
-    if ((!pr || now - (pr.checkedAt ?? 0) > RECHECK_MS) && !inFlight.has(url)) void fetchPr($, url)
-  }
-  return all
+    return (!pr || now - (pr.checkedAt ?? 0) > RECHECK_MS) && !inFlight.has(url)
+  })
 }
 
 // Plain text form, for places drawn as text: the person's own messages, tables.
@@ -113,8 +109,12 @@ export const register: Register = on => {
   })
 
   on('ui.render', { component: 'UserMessage' }, async ($, e, next) => {
-    if (!e.props.text.includes('github.com/')) return next(e)
-    return next({ ...e, props: { ...e.props, text: withSuffix(e.props.text, await known($, e.props.text)) } })
+    const text = e.props.text
+    if (!text.includes('github.com/')) return next(e)
+    const all = await read($, prs)
+    const now = await $.clock.now()
+    for (const url of stale(all, text, now)) void fetchPr($, url)
+    return next({ ...e, props: { ...e.props, text: withSuffix(text, all) } })
   })
 
   // Markdown can't hold color, so each line with a checked PR link is redrawn as Text;
@@ -122,7 +122,9 @@ export const register: Register = on => {
   on('ui.render', { component: 'AssistantMessage' }, async ($, e, next) => {
     const text = e.props.text
     if (!text.includes('github.com/')) return next(e)
-    const all = await known($, text)
+    const all = await read($, prs)
+    const now = await $.clock.now()
+    for (const url of stale(all, text, now)) void fetchPr($, url)
     const hasStatus = (line: string) => [...line.matchAll(PR_LINK)].some(m => all[urlOf(m)])
 
     // ponytail: line-based split; a PR link inside a multi-line paragraph splits that paragraph.
