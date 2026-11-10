@@ -1,1 +1,1 @@
-{ "name": "pr-peek", "version": "0.1.2", "description": "Shows the status of GitHub PRs linked in chat, right after each link", "author": { "name": "Adrian Marin" }, "license": "MIT", "types": "./types/index.d.ts" }
+{ "name": "pr-peek", "version": "0.2.0", "description": "Shows the merge state and CI status of GitHub PRs linked in chat", "author": { "name": "Adrian Marin" }, "license": "MIT", "types": "./types/index.d.ts" }
